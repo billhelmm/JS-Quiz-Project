@@ -1,0 +1,304 @@
+<!--
+    Summary:
+
+    1. Create a data structure that will be used for generating content
+    2. Code an initialization function that will generate the quiz
+    3. Create a function that gives functionality to next button
+    4. Create a function that gives functionality to back button
+    5. Create a function that randomizes the order of answers 
+    6. Create a function that displays the user score
+    7. Create a function that hides an alert message when an answer is selected
+    8. Add styles to the quiz
+    
+-->
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            * {
+                font-family: sans-serif
+            }
+            ul {
+                /*removes default bullet points and indentation*/
+                list-style: none;
+                padding-left: 0;  
+            }
+            li {
+                background-color: #f1f1f6;
+                margin: .5px;
+                transition: .10s;   
+            }
+            li:hover {
+                background-color: #d5d5dc;
+                transition: .10s;
+            }
+            input {
+                width: 1.5rem;
+                height: 1rem;
+                accent-color: green;
+                margin: 10px;        
+            }
+            button {
+                background-color: green;
+                color: white;
+                border: 5px solid green;
+                padding: 5px 25px;
+                font-size: 16px;
+                transition: .15s;
+            }
+            button:hover {
+                cursor:pointer;
+                background-color: orange;
+                border: 5px solid orange;
+                transition: .15s;
+            }
+            .alert {
+                color: orange;   
+            }
+            .user-score {
+                margin: 0;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+            }
+            .hide {
+                display: none;
+            }
+            .show {
+                display: block;
+                animation: fade .15s;
+                
+            }
+            @keyframes fade {
+              from {
+                opacity: 0
+              }
+              to {
+                opacity: 1
+              }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="quiz">
+                <!-- quiz questions (dynamic content)-->
+                <!-- user score (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            let formCounter = 0 
+            let scoreCount = 0
+            
+            // generates quiz
+            function init() {
+                // retrieve #quiz-div for quiz content to go into
+                const quizEl = document.getElementById('quiz')
+                    //for each form, store it in a form-div, hide it, then store form-div in #quiz
+                    questions.forEach( function(question, qIndex) {
+                        let formDiv = document.createElement("div")
+                        formDiv.classList.add("form")
+                        formDiv.id= `form-${qIndex}`
+                        formDiv.classList.add("hide")
+                        quizEl.appendChild(formDiv)
+                        
+                        // at question 1, show itself and hide the back button
+                        if (qIndex === 0) {
+                            formDiv.classList.add("show")
+                            button='none'
+                        } else {
+                            button='span'
+                        }
+
+                        // at last question, change 'next' button text to 'submit'
+                        if (qIndex === questions.length -1) {
+                            nextText = 'Submit'
+                        } else {
+                            nextText = 'Next'
+                        }
+
+                        // for each question, generate a list of answers 
+                        // for each question, generate a form
+                        // add list of answers to form as template string
+                        // store form in form-div  
+                        let quizStr= ''
+                        let answerStr= ''
+                        let questionHeader = `Question ${qIndex + 1} of ${questions.length}:`
+                        question.a.forEach( function(answer, aIndex) {
+                            const randomAnswer = randomRange(question.a.length)
+                            answerStr+= `
+                            <li style="order:${randomAnswer[aIndex]}"> 
+                                <label>
+                                    <input 
+                                        onclick= "alertOff()",
+                                        type= "radio", 
+                                        name="question-${qIndex}",
+                                        data-correct="${question.correct === aIndex}"
+                                    >
+                                    ${answer}
+                                </label>
+                            </li>
+                            `
+                        }) 
+                        quizStr+= `
+                        <form>
+                            <h1> CSS Quiz </h1>
+                            <h3> ${questionHeader} </h3>
+                            <h3> ${question.q} </h3>
+                            <div class="alert"></div>
+                            <ul style="display:flex; flex-direction: column"> ${answerStr} </ul>
+                            <button onclick="goBack(formCounter);return false" style="display:${button}"> Back </button>
+                            <button type="button" onclick="goForward(formCounter);return false"> ${nextText} </button>
+                        </form>
+                        ` 
+                        formDiv.innerHTML = quizStr                     
+                    })
+                    
+                // create user-score div to go into #quiz-div
+                // hide for now 
+                let scoreDiv = document.createElement("div")
+                quizEl.appendChild(scoreDiv)
+                scoreDiv.classList.add("user-score")
+                scoreDiv.classList.add("hide")
+                    
+            } // end init
+            
+            function goForward() {
+                    /* use form-div and the form counter to identify 
+                       the alert message and chosen answer for a given form. */
+                    formDiv = document.getElementsByClassName("form")
+                    const selectedInput= formDiv[formCounter].querySelector('input:checked')
+                    const alert= formDiv[formCounter].querySelector('div.alert')
+                    
+                    // if no answer is chosen before going forward, show alert message
+                    if (selectedInput === null) {
+                        alert.innerHTML = 'Please Select an Answer'
+                    } 
+                    // if at last question, end quiz and display the score.
+                    else if (formCounter === questions.length-1) {
+                        // alert message will disappear
+                        alert.innerHTML = ''
+                        formDiv[formCounter].classList.remove("show") 
+                        displayScore()
+                    } 
+                    // continue to next question
+                    else {
+                        alert.innerHTML = ''
+                        formDiv[formCounter].classList.remove("show")
+                        formCounter+=1
+                        formDiv[formCounter].classList.add("show")
+                    }
+                    
+            }
+
+            function goBack() {
+                    const alert = formDiv[formCounter].querySelector('div.alert')
+                    // erase alert message if triggered
+                    alert.innerHTML = ''
+                    // go back
+                    formDiv = document.getElementsByClassName("form")
+                    formDiv[formCounter].classList.remove("show") 
+                    formCounter-=1
+                    formDiv[formCounter].classList.add("show")
+                    if (formCounter === 0) {
+                        button='none'
+                    }
+            }
+
+            function displayScore() {
+                    // for each question, check the selected answer
+                    // if it's correct, increment the score count
+                    questions.forEach( function(question, qIndex) {
+                        formDiv = document.getElementsByClassName("form")
+                        const selectedInput= formDiv[qIndex].querySelector('input:checked')
+                        if (selectedInput.dataset.correct==="true") {
+                            scoreCount++
+                        }
+                    })
+                    // generate the result
+                    let score = `You got ${scoreCount}/${questions.length} answers correct`
+                    let resultStr= `
+                        <form>
+                            <h1> ${score} </h1>
+                            <button type="button" onClick="history.go(0)"> Restart </button>
+                        </form>
+                    `
+                    // append generated result to user-score div, then  show the score
+                    let scoreDiv = document.querySelector('div.user-score')
+                    scoreDiv.innerHTML = resultStr
+                    scoreDiv.classList.add("show")
+            }
+
+            // hide alert message if answer is selected
+            function alertOff() {
+              formDiv = document.getElementsByClassName("form")
+              const alert= formDiv[formCounter].querySelector('div.alert')
+              alert.style.visibility = 'hidden';
+            }
+
+            // helper function for randomizing answers
+            // returns a random integer from a specified range
+            function random(n) {
+                const r = Math.random() * n
+                return Math.floor(r)
+            }
+
+            // returns an array of a randomly shuffled range
+            /* with the help of this function and the flex-property 'order', 
+               an answer can by shuffled in a list at its index */ 
+            function randomRange(x) {
+                const arr=[]
+                for (let i=0; i<x; i+=1) {
+                    arr.push(i)
+                }
+                const randomArr=[]
+                while (arr.length>0) {
+                    const randomIndex = random(arr.length)
+                    const randomNumber = arr[randomIndex]
+                    randomArr.push(randomNumber)
+                    arr.splice(randomIndex, 1)
+                }
+                return randomArr
+            }
+
+            // initialize the quiz
+            init();
+            
+        </script>
+    </body>
+</html> 

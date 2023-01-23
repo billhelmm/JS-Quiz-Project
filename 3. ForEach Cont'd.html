@@ -1,0 +1,115 @@
+<!-- 
+So far, we've created for our init (quiz-creating) structure a forEach loop
+that generates some html.
+
+The next step is created answers for our generating html.
+
+W/in the loop, we want to define where we're getting our 'answers' from
+and how they'll be generated.
+
+Just like our questions from the js data structure, we'll also create
+a forEach loop to run (htm-creating) code on our answers-data
+
+Since each question has only one correct answer, we'll use radio buttons
+and group them using the 'name' attribute.
+
+So far, this sound like what we want, but a new problem is posed:
+ALL radios, across every question, is in the SAME group. If you were to select 
+an answer from question-2, it would deactivate the answer you chose previously
+from question-1.
+
+What you have to do is create a new radio group for each question.
+
+To understand how to do this, you need to know about another aspect
+of forEach loop. 
+
+When forEach takes a 'callback' (fnc), that callback gets a couple parameters
+from forEach. It guves you a value from the array you're calling forEach on, 
+and an index from that array.
+
+This index is what we need to create a new radio group for each question.
+We can incorporate the index parameter in our forEach loop in order to
+group radios, using the name attribute, by question index.
+-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+
+        <div id="quiz" class="container quiz">
+                <!-- quiz questions (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            function init() {
+                
+                const quizEl = document.getElementById('quiz')
+                    quizStr= ''
+                    questions.forEach( function(question, qIndex) {
+                        let answerStr= ''
+                        question.a.forEach( function(answer) {
+                            answerStr+= `
+                            <li>
+                                <label>
+                                    <input type= "radio", name="question-${qIndex}">
+                                    ${answer}
+                                </label>
+                            </li>
+                            `
+                        }) 
+                        quizStr+= `
+                        <form>
+                            <h1> ${question.q} </h1> 
+                            <ul> ${answerStr} </ul>
+                        </form>
+                        `                       
+                    })
+                    
+                    quizEl.innerHTML = quizStr // moves the new html-questions inside the quiz container
+                    // init structure:
+                    // form
+                    //      h1
+                    //      div.alert! (optional: let's you know whether you got the question right or wrong)
+                    //      ul
+                    //          li
+                    //          ... (each question)
+                    //          button.submit
+            };
+            
+            init();
+            
+        </script>
+    </body>
+</html>
+
+

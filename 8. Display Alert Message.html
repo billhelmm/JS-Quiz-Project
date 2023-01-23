@@ -1,0 +1,188 @@
+<!-- 
+Now, we'll add an alert message to give an user important feedback.
+
+It will tell them whether they've gotten an answer correct, incorrect,
+or that they haven't chosen one.
+
+We want this message to show right above our answers.
+So, we'll create an 'alert' container above the ul tag (which contains the list of answers).
+
+We'll create a div and give it a class of "alert". Since the alert message will vary, 
+we'll add the message in dynamically. We'll leave the container empty for now.
+
+<div class="alert"></div>
+
+We don't want a user to get a message right as they click an option, because they can use it to cheat
+before submitting the question. So, we'll add the message when the the form is 'submitted'.
+
+Earlier, we logged a selected radio button when the submit event was 'heard'. This was done within
+the event listener callback. We'll create the message in here.
+
+Before creating a message for the alert, we have to select it from the element(<form>) that submitted the listener event.
+
+We'll create an alert variable using the event object's target and a CSS selector.
+
+const alert = e.target.querySelector('div.alert')
+
+The '.' in a CSS selector denotes a class name.
+
+Now that we have our alert element, we can do something with it.
+
+What do we do?
+
+We want 1 of 3 messages to show: 'you got it right', 'you got it wrong', 'please select an answer'.
+
+Each message is conditional. An alert message saying you got the answer correct depends on a condition being met.
+An alert message saying you got the answer wrong depends on a different condition being met.
+
+We only want one condition to be true at a time, bc we only want one message to show at a time.
+So they'll have to be unique.
+
+Earlier, we gave each input a data-correct attribute, with a value of 'true' or 'false'.
+We can use these values to determine whether a selected input will get a 'correct' or 'wrong' message.
+
+How do we know when an answer isn't selected?
+
+When we don't choose an answer and submit the form, our console will log a 'null' value. 
+We'll use this 'null value' for our last message.
+
+To create these alert messages, we'll write conditional statements.
+When these statements are met, they will change the inner HTML of the 'alert' element.
+
+alert.innerHTML = 'Please select an Answer'
+
+For the statement, we'll compare the selected Input with a value of 'null' (no input was selected),
+a value of 'true' or 'false'.
+
+Our statements will say: 'selectedInput === null', 'selectedInput.dataset.correct === "true"',
+and 'selectedInput.dataset.correct === "false"'
+
+
+-->
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+
+        <div id="quiz" class="container quiz">
+                <!-- quiz questions (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            function init() {
+                
+                const quizEl = document.getElementById('quiz')
+                    quizStr= ''
+                    questions.forEach( function(question, qIndex) {
+                        let answerStr= ''
+                        question.a.forEach( function(answer, aIndex) {
+                            const randomAnswer = randomRange(question.a.length)
+                            answerStr+= `
+                            <li style="order:${randomAnswer[aIndex]}"> 
+                                <label>
+                                    <input 
+                                        type= "radio", 
+                                        name="question-${qIndex}",
+                                        data-correct="${question.correct === aIndex}"
+                                    >
+                                    ${answer}
+                                </label>
+                            </li>
+                            `
+                        }) 
+                        quizStr+= `
+                        <form>
+                            <h1> ${question.q} </h1>
+                            <div class="alert"></div> 
+                            <ul style="display:flex; flex-direction: column"> ${answerStr} </ul>
+                            <button type="submit"> Submit </button>
+                        </form>
+                        `                       
+                    })
+                    
+                    quizEl.innerHTML = quizStr // moves the new html-questions inside the quiz container
+                    
+                    quizEl.addEventListener( 'submit', function(e) {
+                        e.preventDefault();
+                        const alert = e.target.querySelector('div.alert')
+                        const selectedInput = e.target.querySelector('input:checked')
+                        console.log(selectedInput)
+                        if (selectedInput === null) {
+                            alert.innerHTML = 'Please Select an Answer'
+                        } else if (selectedInput.dataset.correct === "true") {
+                            alert.innerHTML = 'Good Job!'
+                        } else {
+                            alert.innerHTML = 'Oops. That\'s Wrong!'
+                        }
+                        console.log(e.currentTarget);
+                    })
+                    
+                    // init structure:
+                    // form
+                    //      h1
+                    //      div.alert! (optional: let's you know whether you got the question right or wrong)
+                    //      ul
+                    //          li
+                    //          ... (each question)
+                    //          button.submit
+
+            } // end init
+
+            function random(n) {
+                const r = Math.random() * n
+                return Math.floor(r)
+            }
+
+            function randomRange(x) {
+                const arr=[]
+                for (let i=0; i<x; i+=1) {
+                    arr.push(i)
+                }
+                const randomArr=[]
+                while (arr.length>0) {
+                    const randomIndex = random(arr.length)
+                    const randomNumber = arr[randomIndex]
+                    randomArr.push(randomNumber)
+                    arr.splice(randomIndex, 1)
+                }
+                return randomArr
+            }
+
+            init();
+            
+        </script>
+    </body>
+</html>

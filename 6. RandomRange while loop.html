@@ -1,0 +1,236 @@
+<!-- 
+The next thing we want to do is randomize our answers.
+
+In our code, we want to give our list item a number from a randomized array.
+
+To set this up, we'll use CSS styling.
+
+CSS has a property called 'order' which determines the order of list items in a 'flex' container.
+This 'order' property is where we'll eventually insert a random number for each list item.
+
+The 'flex' container will be an inline style for the ul tag, and the order property will be
+an inline style for the li tag.
+
+Flex, by default, displays items horizontally. We don't want our anwsers to be side-by-side,
+so we'll display them vertically.
+
+<ul style="display:flex; flex-direction:column">
+
+<li style="order:">
+
+To return a number from a random array, we'll need to do a couple things.
+1. create a helper function that returns a random number
+2. create a new function that uses the helper function to grab, at random, a number from an ordered array
+and put it in a 'random' array
+
+Our "random number" function will take a number input and return a random number between 0 and the input - 1.
+
+Since we'll grab (all items) from an array (at random), this range makes sense. 0 is the first index and the
+input will be our array's length.
+
+function random (n) {} // n represents the amount of answer for each question
+
+But, how do we create this range and get a random number from it?
+
+To start we'll use the 'Math' object and one of its properties, the 'random' method.
+
+Math.random()
+
+The 'random' method by default gives us a random decimal number between 0-1; it doesn't take a parameter.
+
+What we want is to enlarge this range to the length of our answers array, round down the decimal
+to a whole number, and return that. That way, we get a random number from a range between 0 to array.length -1.
+
+We can do this by multiplying by our function parameter (n) and round-down using another Math method called 'floor', 
+which rounds-down a decimal number; floor can take a parameter.
+
+function random(n) {
+    const r= Math.random() * n
+    return Math.floor(r)
+}
+
+Great, we've finished creating a helper function that returns a random number.
+Next, we'll use this function to 'help' a new function get a range of random numbers. These numbers will be stored in an array.
+
+This new function will be composed of two separate arrays: an ordered array, and a randomized array.
+Initially, both will be set as empty. 
+
+function randomRange(x) {
+    const arr=[]
+    const randomArr=[]
+}
+
+The function will fill up the ordered array, then take away from it at random to fill up the randomized array. 
+In the end, the ordered array will be empty, and the randomized array will be full.
+
+We'll populate the empty ordered string with a for loop.
+The for loop will push a range of numbers using the counter.
+
+for (let i=0; i<x; i+=1) {           // [0,1,2,3,....]
+    arr.push(i)
+}
+
+This gives us an array of ordered numbers. 
+
+Now, we'll begin to take those numbers at random.
+ 
+We'll create a 'while' loop to determine how the empty 'random' array will be filled.
+This loop will run while the first array is filled. Once its empty, the loop will stop.
+
+while (arr.length>0) {}
+
+We'll utilize the 'helper' function from earlier to define a random index from an array, 
+using the array's length to establish the range. This index will be used as a reference to locate the value
+it belongs to (and eventually where to splice the ordered array at).
+
+while (arr.length>0) {
+    const randomIndex= random(arr.length)
+}
+
+Now, we'll define a random number as an item chosen from the ordered array using the random index.
+
+const randomNumber= arr[randomIndex]
+
+Great, we're almost there.
+
+The next steps are to now push the random number into the random array and remove it from the ordered array.
+
+We'll add to the random array by pushing the random number
+
+randomArr.push(randomNumber)
+
+And remove from the ordered array using the index and 'splice'
+
+'Splice' takes two parameters: Where in the array you'll start to remove at (index-location), and how many items 
+you want to remove
+
+arr.splice(randomIndex, 1)
+
+This splicing ensures that the While loop will reach a terminal condition, as the ordered array is now losing an item
+per iteration. Otherwise, we would have an endless loop.
+
+Lastly, we'll return the randomized array result.
+
+return randomArr
+
+Soon, we'll feed values from our randomized array into our list's inline order property.
+
+-->
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+
+        <div id="quiz" class="container quiz">
+                <!-- quiz questions (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            function init() {
+                
+                const quizEl = document.getElementById('quiz')
+                    quizStr= ''
+                    questions.forEach( function(question, qIndex) {
+                        let answerStr= ''
+                        question.a.forEach( function(answer, aIndex) {
+                            answerStr+= `
+                            <li style="order:">
+                                <label>
+                                    <input 
+                                        type= "radio", 
+                                        name="question-${qIndex}",
+                                        data-correct="${question.correct === aIndex}"
+                                    >
+                                    ${answer}
+                                </label>
+                            </li>
+                            `
+                        }) 
+                        quizStr+= `
+                        <form>
+                            <h1> ${question.q} </h1> 
+                            <ul style="display:flex; flex-direction: column"> ${answerStr} </ul>
+                            <button type="submit"> Submit </button>
+                        </form>
+                        `                       
+                    })
+                    
+                    quizEl.innerHTML = quizStr // moves the new html-questions inside the quiz container
+                    
+                    quizEl.addEventListener( 'submit', function(e) {
+                        e.preventDefault();
+                        const selectedInput = e.target.querySelector('input:checked');
+                        console.log(selectedInput);
+                    })
+                    
+                    // init structure:
+                    // form
+                    //      h1
+                    //      div.alert! (optional: let's you know whether you got the question right or wrong)
+                    //      ul
+                    //          li
+                    //          ... (each question)
+                    //          button.submit
+
+            } // end init
+
+            function random(n) {
+                const r = Math.random() * n
+                return Math.floor(r)
+            }
+
+            function randomRange(x) {
+                const arr=[]
+                for (let i=0; i<x; i+=1) {
+                    arr.push(i)
+                }
+                const randomArr=[]
+                while (arr.length>0) {
+                    const randomIndex = random(arr.length)
+                    const randomNumber = arr[randomIndex]
+                    randomArr.push(randomNumber)
+                    arr.splice(randomIndex, 1)
+                }
+                return randomArr
+            }
+
+            console.log(randomRange(4));
+            
+            init();
+            
+        </script>
+    </body>
+</html>

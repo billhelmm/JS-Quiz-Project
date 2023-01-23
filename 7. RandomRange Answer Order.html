@@ -1,0 +1,143 @@
+<!-- 
+Now that we know how to get a randomized array for any given length,
+we'll list each answer in a random order. 
+
+We can do this by setting the random range to our answer array's length,
+then get each answer at its index.
+
+We'll declare a variable randomAnswer in our init fnc, and express it as a randomized range of
+of our answer array's length.
+
+const randomAnswer = randomRange(question.a.length)
+
+Even though our quiz has exactly 4 answers for each question, its a best practice to write dynamically.
+An array's length is self-describing. If we add or remove an answer from a question, the length property
+will automatically update itself.
+
+Now, we'll use this expression, along with the answer index, to access
+an item at each randomized number in the range.
+
+Let's set the order property in our list tag to a new expression that does this.
+
+We'll substitute the random-answer expression with a placeholder, it's variable name, using 'string interpolation' ${}.
+This just shortens our code and makes it more readable.
+
+<li style="order: ${randomAnswer[aIndex]}">
+-->
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+
+        <div id="quiz" class="container quiz">
+                <!-- quiz questions (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            function init() {
+                
+                const quizEl = document.getElementById('quiz')
+                    quizStr= ''
+                    questions.forEach( function(question, qIndex) {
+                        let answerStr= ''
+                        question.a.forEach( function(answer, aIndex) {
+                            const randomAnswer = randomRange(question.a.length)
+                            answerStr+= `
+                            <li style="order:${randomAnswer[aIndex]}">
+                                <label>
+                                    <input 
+                                        type= "radio", 
+                                        name="question-${qIndex}",
+                                        data-correct="${question.correct === aIndex}"
+                                    >
+                                    ${answer}
+                                </label>
+                            </li>
+                            `
+                        }) 
+                        quizStr+= `
+                        <form>
+                            <h1> ${question.q} </h1> 
+                            <ul style="display:flex; flex-direction: column"> ${answerStr} </ul>
+                            <button type="submit"> Submit </button>
+                        </form>
+                        `                       
+                    })
+                    
+                    quizEl.innerHTML = quizStr // moves the new html-questions inside the quiz container
+                    
+                    quizEl.addEventListener( 'submit', function(e) {
+                        e.preventDefault();
+                        const selectedInput = e.target.querySelector('input:checked');
+                        console.log(selectedInput);
+                    })
+                    
+                    // init structure:
+                    // form
+                    //      h1
+                    //      div.alert! (optional: let's you know whether you got the question right or wrong)
+                    //      ul
+                    //          li
+                    //          ... (each question)
+                    //          button.submit
+
+            } // end init
+
+            function random(n) {
+                const r = Math.random() * n
+                return Math.floor(r)
+            }
+
+            function randomRange(x) {
+                const arr=[]
+                for (let i=0; i<x; i+=1) {
+                    arr.push(i)
+                }
+                const randomArr=[]
+                while (arr.length>0) {
+                    const randomIndex = random(arr.length)
+                    const randomNumber = arr[randomIndex]
+                    randomArr.push(randomNumber)
+                    arr.splice(randomIndex, 1)
+                }
+                return randomArr
+            }
+
+            init();
+            
+        </script>
+    </body>
+</html>

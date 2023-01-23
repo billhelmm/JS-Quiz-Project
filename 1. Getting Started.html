@@ -1,0 +1,51 @@
+<!-- 
+What should I first consider when making a quiz?
+- The structure that represent the quiz.
+
+For a quiz, the data structure will be questions and answers.
+Each question-problem will be an object, with a property of a question, an array
+of multiple answers, and the index of the correct answer inside it.
+
+All of these objects are stored inside an array.
+This array represents the problems of the quiz. 
+-->
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+        <!-- Script -->
+        <script>
+            const problems = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+        </script>
+    </body>
+</html>

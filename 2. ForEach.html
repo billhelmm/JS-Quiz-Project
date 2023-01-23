@@ -1,0 +1,83 @@
+<!-- 
+The next step is defining the structure for the fnc that will run and generate our quiz.
+This fnc is known as 'init', short for initialize.
+
+For the structure, we'll want to have something that loops through
+the array of questions (the javascript data structure we created earlier).
+For each question we run code that creates html, which will go inside our empty div. 
+-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+
+        <div id="quiz" class="container quiz">
+                <!-- quiz questions (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            function init() {
+                // preliminary step: grab the container you'll put your quiz questions in
+                const quizEl = document.getElementbyId('quiz')
+                // loop through the array of questions
+                    quizStr= '' // create a string that you'll append new html-questions to
+                    // for each question create some html
+                    questions.forEach( function(question) { 
+                    // for each item in our 'questions' array, we'll pass it through a fnc declared as 'question' (the item) so we can run some code on it
+                    // <h1> ${question.q} </h1> Here, the property 'q' of item 'question' is being accessed using a key '.q'
+                        quizStr+= `
+                        <form>
+                            <h1> ${question.q} </h1> 
+                            <ul>....</ul>
+                        </form>
+                        `                       
+                    })
+                    
+                    quizEl.innerHTML = quizStr // moves the new html-questions inside the quiz container
+                    // init structure:
+                    // form
+                    //      h1
+                    //      div.alert! (optional: let's you know whether you got the question right or wrong)
+                    //      ul
+                    //          li
+                    //          ... (each question)
+                    //          button.submit
+            }
+            
+            init()
+            
+        </script>
+    </body>
+</html>
+
+

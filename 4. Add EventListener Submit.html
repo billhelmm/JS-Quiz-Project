@@ -1,0 +1,135 @@
+<!-- 
+Adding an event listener gives user functionality to our page. 
+It allows the user to interact with a page and change its appearance.
+
+What we need now is a button to submit our answers when we're done.
+To do this, we'll simply add a button to our generating form 
+with type 'submit'.
+
+Keep in mind that this generating html doesn't exist in the source code (html),
+but in our script. When our page first loads, the forms don't exist.
+
+So, to handle submits we need to 'listen' to them dynamically in JS.
+
+To listen to submit messages, we'll add an event listener.
+Event listeners take two parameters: an event name (chosen from a long list of 
+JS event types), and a callback that runs code when the event is 'heard'.
+
+For our practice, we'll add a submit event listener to our quiz dom element.
+This element isn't the form, but any submit messages that bubble-up in our forms 
+are w/in this 'quizEl'.
+
+When the submit event occurs, quizEl will be notified of it and will run the callback.
+
+The event listener callback, like the forEach callback, takes a parameter.
+This parameter is the event 'object', which describes the event that just occurred.
+
+In our case, if we want to test our event listener by logging into the console
+the event object, nothing will show up.
+
+That's because a form's default behavior when submitted is to refresh the page.
+When this happens, our page reloads, the form is added, the event listener is added,
+and everything you just did (logging the event object at submit) is erased.
+
+Any DOM event type has shared methods and properties that can be used to customize 
+an event's default 'actions'.
+One of which is the method '.preventDefault()'. This prevents an event's default action
+from occurring.
+
+The logged event object, like the question objects from our data array, also have properties.
+One of these properties is 'target', the element which submitted our event; in other words,
+the 'target' is what generated our event.
+
+Console - target: <form>
+-->
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+
+        <div id="quiz" class="container quiz">
+                <!-- quiz questions (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            function init() {
+                
+                const quizEl = document.getElementById('quiz')
+                    quizStr= ''
+                    questions.forEach( function(question, qIndex) {
+                        let answerStr= ''
+                        question.a.forEach( function(answer) {
+                            answerStr+= `
+                            <li>
+                                <label>
+                                    <input type= "radio", name="question-${qIndex}">
+                                    ${answer}
+                                </label>
+                            </li>
+                            `
+                        }) 
+                        quizStr+= `
+                        <form>
+                            <h1> ${question.q} </h1> 
+                            <ul> ${answerStr} </ul>
+                            <button type="submit"> Submit </button>
+                        </form>
+                        `                       
+                    })
+                    
+                    quizEl.innerHTML = quizStr // moves the new html-questions inside the quiz container
+                    
+                    quizEl.addEventListener( 'submit', function(e) {
+                        e.preventDefault();
+                        console.log(e);
+                    })
+                    
+                    // init structure:
+                    // form
+                    //      h1
+                    //      div.alert! (optional: let's you know whether you got the question right or wrong)
+                    //      ul
+                    //          li
+                    //          ... (each question)
+                    //          button.submit
+
+            } // end init
+            
+            init();
+            
+        </script>
+    </body>
+</html>

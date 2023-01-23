@@ -1,0 +1,178 @@
+<!-- 
+Next, we're going to check if an input (our radio button) is true or false.
+
+Specifically, we'll add a data-attribute to our input, select the input
+from our listener event callback, and ask if it has a value of true or false. 
+
+First, we'll 'query' for elements in the event target (<form>).
+For our practice, we are going to select our input.
+
+To query for a element, you can use querySelector() or querySelectorAll().
+Since there's only one right answer for each question, we'll use querySelector(),
+which returns only one item (the first it finds).
+
+e.target.querySelector()
+
+Now, we need a 'CSS selector' that can look at all of our elements in our form (the target)
+and get just the inputs
+
+('input')
+
+If you have other input types in your form, you can make your selector more specific. 
+You can use brackets, and inside specify an attribute. In our case, if we had more than 
+one input type, we would specify the type.
+
+('input[type=radio]')
+
+If we log this, the console will print the first radio input element it identifies and its attributes
+(the entire tag)
+
+If we used querySelectorAll(), the console would print a 'node' list of
+every radio input element.
+
+Lastly, we can add a pseudo-class that gets only 'checked' radio inputs
+
+('input[type=radio]:checked')
+
+So, the input is the tag, the brackets say the tag has an attribute, and the colon
+specifies a pseudoclass for the tag.
+
+We'll declare a variable to assign this input selection.
+
+const selectedInput = e.target.querySelector('input:checked')
+
+If we log selectedInput, the console will print the checked
+input -- the element and its attributes -- at submit.
+
+
+The names or 'identifiers' you give for variables and functions are super important
+to writing code.
+
+If the names don't make sense, it's hard to understand your code
+
+Now that we know how to get a selected input, the next step is to figure out
+how to know if the selected input is correct or not.
+
+Since we've specified that our selected input is a checked radio button,
+What we'll do is add a data-property attribute to our button to say whether it's
+correct or not. 
+
+data-correct =""
+
+If we write something like "${question.correct}" and log the selected input, it will contain
+an attribute of the correct answer's index.
+
+That's fine, but it doesn't directly tell us whether the input is correct or not.
+
+What we want instead is to have the attribute say a correct input is 'true' 
+and an incorrect input is 'false'.
+
+To do this, we'll compare two things with a logical operator. A logical, or 'boolean',
+operator returns a value of true or false.
+
+We'll use the equivalency operator to compare the 'correct' index with the input's index.
+
+....
+question.a.forEach( function(answer,aIndex) {
+....
+data-correct= "${question.correct === aIndex}"
+
+
+When we 'submit', we can get the selected input and ask it if their 'data-correct' is true or false.
+-->
+
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+
+
+        <div id="quiz" class="container quiz">
+                <!-- quiz questions (dynamic content)-->
+        </div>
+        <!-- Script -->
+        <script>
+            const questions = [
+                {
+                    q: 'Which of the following is not a real eCommerce platform?',
+                    a: ['Shopify', 'WooCommerce', 'ShopCommerce', 'BigCommerce'],
+                    correct: 2 
+                },
+                {
+                    q: 'If Shopify is so good, why are Shopify developers necessary?',
+                    a: ['To save time on things like store setups and migrations',
+                        'To extend the limited design options and functionalities of themes with custom code',
+                        'To provide support with a deep understanding of how the platform works and what its limitations are', 
+                        'All the above'
+                    ],
+                    correct: 3
+                },
+                {
+                    q: 'Which of the following is true about Shopify developers?',
+                    a: ['They are paid extremely well',
+                        'There is a high demand for them',
+                        'They need to know web development, the platform itself, and the liquid template language',
+                        'All the above'
+                    ],
+                    correct: 3
+                }
+            ];
+
+            function init() {
+                
+                const quizEl = document.getElementById('quiz')
+                    quizStr= ''
+                    questions.forEach( function(question, qIndex) {
+                        let answerStr= ''
+                        question.a.forEach( function(answer, aIndex) {
+                            answerStr+= `
+                            <li>
+                                <label>
+                                    <input 
+                                        type= "radio", 
+                                        name="question-${qIndex}",
+                                        data-correct="${question.correct === aIndex}"
+                                    >
+                                    ${answer}
+                                </label>
+                            </li>
+                            `
+                        }) 
+                        quizStr+= `
+                        <form>
+                            <h1> ${question.q} </h1> 
+                            <ul> ${answerStr} </ul>
+                            <button type="submit"> Submit </button>
+                        </form>
+                        `                       
+                    })
+                    
+                    quizEl.innerHTML = quizStr // moves the new html-questions inside the quiz container
+                    
+                    quizEl.addEventListener( 'submit', function(e) {
+                        e.preventDefault();
+                        const selectedInput = e.target.querySelector('input:checked');
+                        console.log(selectedInput);
+                    })
+                    
+                    // init structure:
+                    // form
+                    //      h1
+                    //      div.alert! (optional: let's you know whether you got the question right or wrong)
+                    //      ul
+                    //          li
+                    //          ... (each question)
+                    //          button.submit
+
+            } // end init
+            
+            init();
+            
+        </script>
+    </body>
+</html>
